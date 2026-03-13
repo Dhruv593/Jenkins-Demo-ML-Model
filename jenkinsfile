@@ -1,28 +1,39 @@
 pipeline {
-   agent any
-   stages {
-      stage('build') {
-          steps {
-              echo 'building the application'
-           }
-       }
-      stage('test') {
-          steps {
-              echo 'running tests'
-           }
-       }
-      stage('deploy') {
-          steps {
-              echo 'deploying the application'
-           }
-       }
-   }
-   post {
-      success {
-          bat 'echo build successful'
-       }
-      failure {
-          bat 'echo build failed'
-       }
-   }
+    agent any
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                git 'https://github.com/Dhruv593/Jenkins-Demo-ML-Model.git'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                sh 'docker-compose build'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                echo 'running tests'
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                sh 'docker-compose up -d'
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Build Successful'
+        }
+        failure {
+            echo 'Build Failed'
+        }
+    }
 }
