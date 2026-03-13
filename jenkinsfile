@@ -3,15 +3,9 @@ pipeline {
 
     stages {
 
-        stage('Checkout') {
-            steps {
-                git 'https://github.com/Dhruv593/Jenkins-Demo-ML-Model.git'
-            }
-        }
-
         stage('Build') {
             steps {
-                sh 'docker-compose build'
+                echo 'building the application'
             }
         }
 
@@ -23,7 +17,7 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                sh 'docker-compose up -d'
+                echo 'deploying the application'
             }
         }
     }
