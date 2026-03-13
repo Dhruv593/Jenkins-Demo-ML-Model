@@ -1,0 +1,48 @@
+version: "3.9"
+
+services:
+  ml-service:
+    container_name: ml-service
+    build: ./ml-service
+    ports:
+      - "8001:8001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - iris-net
+
+  backend-service:
+    container_name: backend-service
+    build: ./backend
+    ports:
+      - "8000:8000"
+    depends_on:
+      ml-service:
+        condition: service_healthy
+    networks:
+      - iris-net
+
+  frontend-service:
+    container_name: frontend-service
+    build: ./frontend
+    networks:
+      - iris-net
+
+  gateway-service:
+    container_name: gateway-service
+    build: ./gateway
+    ports:
+      - "8080:80"
+    depends_on:
+      - frontend-service
+      - backend-service
+    networks:
+      - iris-net
+
+networks:
+  iris-net:
+    driver: bridge
